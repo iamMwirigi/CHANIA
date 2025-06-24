@@ -1,8 +1,15 @@
 <?php
-require_once __DIR__ . '/../../../config/Database.php';
+// Headers
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
 
-$db_instance = new Database();
-$db = $db_instance->connect();
+include_once __DIR__ . '/../../../config/Database.php';
+include_once __DIR__ . '/../auth/authorize.php';
+
+$userData = authorize(['admin', 'user']);
+
+$database = new Database();
+$db = $database->connect();
 
 if ($db === null) {
     http_response_code(500);

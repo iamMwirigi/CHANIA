@@ -4,6 +4,10 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 include_once __DIR__ . '/../../../config/Database.php';
+include_once __DIR__ . '/../../models/Collection.php';
+include_once __DIR__ . '/../auth/authorize.php';
+
+$userData = authorize(['admin', 'user']);
 
 $database = new Database();
 $db = $database->connect();
