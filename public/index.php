@@ -108,6 +108,27 @@ switch ($uri) {
         require __DIR__ . '/../api/v1/sms/members.php';
         break;
 
+    // Users
+    case '/api/v1/users/create':
+        require __DIR__ . '/../api/v1/users/create.php';
+        break;
+
+    case '/api/v1/users/read':
+        require __DIR__ . '/../api/v1/users/read.php';
+        break;
+
+    case '/api/v1/users/read_one':
+        require __DIR__ . '/../api/v1/users/read_one.php';
+        break;
+    
+    case '/api/v1/users/update':
+        require __DIR__ . '/../api/v1/users/update.php';
+        break;
+    
+    case '/api/v1/users/delete':
+        require __DIR__ . '/../api/v1/users/delete.php';
+        break;
+
     // Default
     default:
         http_response_code(404);
