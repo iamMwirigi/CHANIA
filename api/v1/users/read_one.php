@@ -7,7 +7,7 @@ include_once __DIR__ . '/../../../config/Database.php';
 include_once __DIR__ . '/../../../models/User.php';
 
 $database = new Database();
-$db = $database->getConnection();
+$db = $database->connect();
 
 $user = new User($db);
 
