@@ -66,8 +66,8 @@ if (!$user) {
 
 if ($user) {
     $secret_key = $_ENV['JWT_SECRET'];
-    $issuer_claim = $_ENV['JWT_ISSUER'];
-    $audience_claim = $_ENV['JWT_AUDIENCE'];
+    $issuer_claim = $_ENV['JWT_ISSUER'] ?? 'your_issuer';
+    $audience_claim = $_ENV['JWT_AUDIENCE'] ?? 'your_audience';
     $issuedat_claim = time();
     $notbefore_claim = $issuedat_claim;
     $expire_claim = $issuedat_claim + 3600; // expire in 1 hour
