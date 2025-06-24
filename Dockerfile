@@ -25,7 +25,8 @@ COPY . .
 # Install Composer dependencies
 RUN composer install --no-dev --no-interaction --no-plugins --no-scripts --prefer-dist
 
-# Copy Nginx config template
+# Copy Nginx configurations
+COPY config/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx.conf.template /etc/nginx/conf.d/default.conf.template
 
 # Change ownership
