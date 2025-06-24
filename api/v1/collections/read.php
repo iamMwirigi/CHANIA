@@ -17,8 +17,11 @@ if($db === null) {
     exit();
 }
 
-$start_date = isset($_GET['start_date']) ? $_GET['start_date'] : null;
-$end_date = isset($_GET['end_date']) ? $_GET['end_date'] : null;
+$data = json_decode(file_get_contents("php://input"));
+
+$start_date = isset($data->start_date) ? $data->start_date : (isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d'));
+$end_date = isset($data->end_date) ? $data->end_date : (isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d'));
+$stage_name = isset($data->stage_name) ? $data->stage_name : (isset($_GET['stage_name']) ? $_GET['stage_name'] : null);
 
 $query = 'SELECT * FROM new_transaction';
 
@@ -28,6 +31,9 @@ $params = [];
 if ($userData->role === 'user') {
     $where_clauses[] = "collected_by = :username";
     $params[':username'] = $userData->username;
+} else if ($stage_name) {
+    $where_clauses[] = "stage_name = :stage_name";
+    $params[':stage_name'] = $stage_name;
 }
 
 if ($start_date) {
@@ -38,11 +44,12 @@ if ($end_date) {
     $where_clauses[] = "t_date <= :end_date";
     $params[':end_date'] = $end_date;
 }
+
 if (count($where_clauses) > 0) {
     $query .= " WHERE " . implode(" AND ", $where_clauses);
 }
 
-$query .= ' ORDER BY t_date DESC';
+$query .= ' ORDER BY t_date DESC, id DESC';
 
 $stmt = $db->prepare($query);
 $stmt->execute($params);
