@@ -70,7 +70,7 @@ if ($user) {
     $audience_claim = $_ENV['JWT_AUDIENCE'] ?? 'your_audience';
     $issuedat_claim = time();
     $notbefore_claim = $issuedat_claim;
-    $expire_claim = $issuedat_claim + 3600; // expire in 1 hour
+    $expire_claim = $issuedat_claim + 86400; // expire in 24 hours
 
     $token = array(
         "iss" => $issuer_claim,

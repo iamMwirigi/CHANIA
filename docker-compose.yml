@@ -11,6 +11,7 @@ services:
             - "3306:3306"
         volumes:
             - ./chania_collections.sql:/docker-entrypoint-initdb.d/1.sql
+            - ./docker/db/alter_sms_outbox.sql:/docker-entrypoint-initdb.d/2-alter.sql
             - db_data:/var/lib/mysql
 
     php:
