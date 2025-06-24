@@ -1,0 +1,14 @@
+{
+    "name": "chania/chania-collections-api",
+    "description": "API for Chania Collections",
+    "type": "project",
+    "require": {
+        "php": ">=8.1",
+        "vlucas/phpdotenv": "^5.5"
+    },
+    "authors": [
+        {
+            "name": "Chania Sacco"
+        }
+    ]
+} 
