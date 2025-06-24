@@ -33,4 +33,4 @@ COPY config/nginx.conf.template /etc/nginx/conf.d/default.conf.template
 RUN chown -R www-data:www-data /var/www/html
 
 # Expose port and start servers
-CMD sh -c "envsubst < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;' & php-fpm"
+CMD ["/bin/sh", "-c", "envsubst '${PORT}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;' & exec php-fpm"]
