@@ -27,7 +27,7 @@ if (empty($data->id)) {
     return;
 }
 
-$query = 'DELETE FROM vehicles WHERE id = :id';
+$query = 'DELETE FROM vehicle WHERE id = :id';
 
 $stmt = $db->prepare($query);
 

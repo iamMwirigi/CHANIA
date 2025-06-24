@@ -17,9 +17,9 @@ if($db === null) {
     exit();
 }
 
-$query = 'SELECT v.id, v.number_plate, v.member_id, m.name as member_name
-          FROM vehicles v
-          LEFT JOIN member m ON v.member_id = m.id
+$query = 'SELECT v.id, v.number_plate, v.owner, m.name as owner_name
+          FROM vehicle v
+          LEFT JOIN member m ON v.owner = m.id
           ORDER BY v.number_plate ASC';
 
 $stmt = $db->prepare($query);
@@ -36,8 +36,8 @@ if($num > 0) {
         $vehicle_item = array(
             'id' => $id,
             'number_plate' => $number_plate,
-            'member_id' => $member_id,
-            'member_name' => $member_name
+            'owner_id' => $owner,
+            'owner_name' => $owner_name
         );
 
         array_push($vehicles_arr['data'], $vehicle_item);

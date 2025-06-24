@@ -21,24 +21,27 @@ if($db === null) {
 
 $data = json_decode(file_get_contents("php://input"));
 
-if (empty($data->number_plate) || empty($data->member_id)) {
+if (empty($data->number_plate) || empty($data->owner)) {
     http_response_code(400);
     echo json_encode(array("message" => "Incomplete data for vehicle.", "response" => "error"));
     return;
 }
 
-$query = 'INSERT INTO vehicles SET number_plate = :number_plate, member_id = :member_id';
+// Create vehicle
+$query = 'INSERT INTO vehicle (number_plate, owner) VALUES (:number_plate, :owner)';
 
+// Prepare statement
 $stmt = $db->prepare($query);
 
 // Clean data
-$number_plate = htmlspecialchars(strip_tags($data->number_plate));
-$member_id = htmlspecialchars(strip_tags($data->member_id));
+$data->number_plate = htmlspecialchars(strip_tags($data->number_plate));
+$data->owner = htmlspecialchars(strip_tags($data->owner));
 
 // Bind data
-$stmt->bindParam(':number_plate', $number_plate);
-$stmt->bindParam(':member_id', $member_id);
+$stmt->bindParam(':number_plate', $data->number_plate);
+$stmt->bindParam(':owner', $data->owner);
 
+// Execute query
 if($stmt->execute()) {
     http_response_code(201);
     echo json_encode(
