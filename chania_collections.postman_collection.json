@@ -23,12 +23,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/v1/auth/login",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/auth/login",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -50,12 +51,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/dashboard",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/dashboard",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -71,12 +73,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/dashboard?start_date=2024-06-13&end_date=2024-06-14",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/dashboard?start_date=2024-06-13&end_date=2024-06-14",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -116,12 +119,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/v1/members/create",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/members/create",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -138,12 +142,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/members/read",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/members/read",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -160,12 +165,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/members/read_one?id=41",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/members/read_one?id=41",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -197,12 +203,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/v1/members/update",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/members/update",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -228,12 +235,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/v1/members/delete",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/members/delete",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -264,12 +272,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/v1/vehicles/create",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/vehicles/create",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -286,12 +295,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/vehicles/read",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/vehicles/read",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -308,12 +318,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/vehicles/read_one?id=1",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/vehicles/read_one?id=1",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -345,12 +356,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/v1/vehicles/update",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/vehicles/update",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -376,12 +388,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/v1/vehicles/delete",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/vehicles/delete",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -403,12 +416,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/collections/read",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/collections/read",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",
@@ -425,12 +439,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/collections/read_one?id=177502",
-							"protocol": "http",
+							"raw": "https://chania.onrender.com/api/v1/collections/read_one?id=177502",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"chania",
+								"onrender",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"v1",

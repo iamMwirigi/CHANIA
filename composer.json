@@ -4,11 +4,12 @@
     "type": "project",
     "require": {
         "php": ">=8.1",
-        "vlucas/phpdotenv": "^5.5"
+        "vlucas/phpdotenv": "^5.5",
+        "firebase/php-jwt": "^6.11"
     },
     "authors": [
         {
             "name": "Chania Sacco"
         }
     ]
-} 
+}
