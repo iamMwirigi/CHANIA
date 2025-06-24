@@ -30,4 +30,4 @@ $stage_arr = array(
 );
 
 // Make JSON
-print_r(json_encode($stage_arr)); 
+echo json_encode($stage_arr); 
