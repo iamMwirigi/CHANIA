@@ -235,18 +235,13 @@
 							}
 						},
 						"url": {
-							"raw": "https://chania.onrender.com/api/v1/members/delete",
-							"protocol": "https",
+							"raw": "{{base_url}}/members/delete.php",
 							"host": [
-								"chania",
-								"onrender",
-								"com"
+								"{{base_url}}"
 							],
 							"path": [
-								"api",
-								"v1",
 								"members",
-								"delete"
+								"delete.php"
 							]
 						}
 					},
@@ -544,6 +539,61 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Sent Messages",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/sms/read.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"sms",
+								"read.php"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Bulk SMS",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"member_ids\": [41, 138],\n    \"message\": \"This is a test message sent via Postman.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/sms/send.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"sms",
+								"send.php"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -700,5 +750,15 @@
 				}
 			]
 		}
-	]
-} 
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{admin_token}}",
+				"type": "string"
+			}
+		]
+	}
+}
