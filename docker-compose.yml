@@ -12,9 +12,7 @@ services:
       - db
 
   php:
-    build:
-      context: .
-      dockerfile: docker/php/Dockerfile
+    build: .
     volumes:
       - ./:/var/www/html
     env_file:
