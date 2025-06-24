@@ -12,6 +12,7 @@ services:
         volumes:
             - ./chania_collections.sql:/docker-entrypoint-initdb.d/1.sql
             - ./docker/db/vehicles.sql:/docker-entrypoint-initdb.d/2.sql
+            - ./docker/db/users_and_admins.sql:/docker-entrypoint-initdb.d/3.sql
             - db_data:/var/lib/mysql
 
     php:

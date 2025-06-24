@@ -4,7 +4,6 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 include_once __DIR__ . '/../../../config/Database.php';
-include_once __DIR__ . '/../../models/Collection.php';
 include_once __DIR__ . '/../auth/authorize.php';
 
 $userData = authorize(['admin', 'user']);
@@ -30,6 +29,13 @@ $num = $stmt->rowCount();
 
 if($num > 0) {
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($userData->role === 'user' && $row['collected_by'] !== $userData->username) {
+        http_response_code(403);
+        echo json_encode(array("message" => "Forbidden. You don't have permission to access this resource.", "response" => "error"));
+        exit();
+    }
+
     extract($row);
     $transaction_item = array(
         'id' => $id,

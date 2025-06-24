@@ -4,7 +4,6 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 include_once __DIR__ . '/../../../config/Database.php';
-include_once __DIR__ . '/../../models/Collection.php';
 include_once __DIR__ . '/../auth/authorize.php';
 
 $userData = authorize(['admin', 'user']);
@@ -25,6 +24,12 @@ $query = 'SELECT * FROM new_transaction';
 
 $where_clauses = [];
 $params = [];
+
+if ($userData->role === 'user') {
+    $where_clauses[] = "collected_by = :username";
+    $params[':username'] = $userData->username;
+}
+
 if ($start_date) {
     $where_clauses[] = "t_date >= :start_date";
     $params[':start_date'] = $start_date;
