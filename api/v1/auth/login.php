@@ -1,6 +1,5 @@
 <?php
 
-require __DIR__ . '/../../../../vendor/autoload.php';
 use Firebase\JWT\JWT;
 
 include_once __DIR__ . '/../../../config/Database.php';
