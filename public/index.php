@@ -80,6 +80,23 @@ switch ($uri) {
         require __DIR__ . '/../api/v1/collections/read_one.php';
         break;
 
+    // Stages
+    case '/api/v1/stages/create':
+        require __DIR__ . '/../api/v1/stages/create.php';
+        break;
+    case '/api/v1/stages/read':
+        require __DIR__ . '/../api/v1/stages/read.php';
+        break;
+    case '/api/v1/stages/read_one':
+        require __DIR__ . '/../api/v1/stages/read_one.php';
+        break;
+    case '/api/v1/stages/update':
+        require __DIR__ . '/../api/v1/stages/update.php';
+        break;
+    case '/api/v1/stages/delete':
+        require __DIR__ . '/../api/v1/stages/delete.php';
+        break;
+
     // Default
     default:
         http_response_code(404);
