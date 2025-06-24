@@ -1,28 +1,35 @@
-FROM php:8.1-fpm-alpine
-
-WORKDIR /var/www/html
+FROM php:8.2-fpm-alpine
 
 # Install system dependencies
-RUN apk add --no-cache curl git
+RUN apk add --no-cache \
+    $PHPIZE_DEPS \
+    git \
+    curl \
+    mysql-client \
+    libzip-dev \
+    gettext \
+    nginx
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql
+RUN docker-php-ext-install pdo pdo_mysql zip
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy composer.json and composer.lock
-COPY composer*.json ./
+# Set working directory
+WORKDIR /var/www/html
 
-# Install dependencies
+# Copy application files
+COPY . .
+
+# Install Composer dependencies
 RUN composer install --no-dev --no-interaction --no-plugins --no-scripts --prefer-dist
 
-# Copy existing application directory contents
-COPY . /var/www/html
+# Copy Nginx config template
+COPY config/nginx.conf.template /etc/nginx/conf.d/default.conf.template
 
-# Copy user permissions
-COPY --chown=www-data:www-data . /var/www/html
+# Change ownership
+RUN chown -R www-data:www-data /var/www/html
 
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"] 
+# Expose port and start servers
+CMD sh -c "envsubst < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;' & php-fpm"
