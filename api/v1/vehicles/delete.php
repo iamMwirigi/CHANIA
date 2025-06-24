@@ -6,7 +6,6 @@ header('Access-Control-Allow-Methods: DELETE');
 header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, Authorization, X-Requested-With');
 
 include_once __DIR__ . '/../../../config/Database.php';
-include_once __DIR__ . '/../../models/Vehicle.php';
 include_once __DIR__ . '/../auth/authorize.php';
 
 $userData = authorize(['admin']);
@@ -14,8 +13,9 @@ $userData = authorize(['admin']);
 $database = new Database();
 $db = $database->connect();
 
-if(!$db) {
-    echo json_encode(['message' => 'Database connection error']);
+if($db === null) {
+    http_response_code(503);
+    echo json_encode(['message' => 'Failed to connect to the database.', 'response' => 'error']);
     exit();
 }
 

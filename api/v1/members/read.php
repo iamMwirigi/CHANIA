@@ -4,7 +4,6 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 include_once __DIR__ . '/../../../config/Database.php';
-include_once __DIR__ . '/../../models/Member.php';
 include_once __DIR__ . '/../auth/authorize.php';
 
 $userData = authorize(['admin', 'user']);
@@ -12,8 +11,9 @@ $userData = authorize(['admin', 'user']);
 $database = new Database();
 $db = $database->connect();
 
-if(!$db) {
-    echo json_encode(['message' => 'Database connection error']);
+if($db === null) {
+    http_response_code(503);
+    echo json_encode(['message' => 'Failed to connect to the database.', 'response' => 'error']);
     exit();
 }
 

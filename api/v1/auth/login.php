@@ -13,6 +13,12 @@ header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,
 $database = new Database();
 $db = $database->connect();
 
+if ($db === null) {
+    http_response_code(503); // Service Unavailable
+    echo json_encode(array("message" => "Failed to connect to the database.", "response" => "error"));
+    exit();
+}
+
 $data = json_decode(file_get_contents("php://input"));
 
 if (empty($data->username) || empty($data->password)) {
@@ -59,9 +65,9 @@ if (!$user) {
 }
 
 if ($user) {
-    $secret_key = getenv('JWT_SECRET');
-    $issuer_claim = getenv('JWT_ISSUER');
-    $audience_claim = getenv('JWT_AUDIENCE');
+    $secret_key = $_ENV['JWT_SECRET'];
+    $issuer_claim = $_ENV['JWT_ISSUER'];
+    $audience_claim = $_ENV['JWT_AUDIENCE'];
     $issuedat_claim = time();
     $notbefore_claim = $issuedat_claim;
     $expire_claim = $issuedat_claim + 3600; // expire in 1 hour

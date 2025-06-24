@@ -12,8 +12,9 @@ $userData = authorize(['admin', 'user']);
 $database = new Database();
 $db = $database->connect();
 
-if(!$db) {
-    echo json_encode(['message' => 'Database connection error']);
+if($db === null) {
+    http_response_code(503);
+    echo json_encode(['message' => 'Failed to connect to the database.', 'response' => 'error']);
     exit();
 }
 

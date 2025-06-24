@@ -21,7 +21,7 @@ function authorize($allowed_roles = []) {
     }
 
     try {
-        $secret_key = getenv('JWT_SECRET');
+        $secret_key = $_ENV['JWT_SECRET'];
         $decoded = JWT::decode($jwt, new Key($secret_key, 'HS256'));
 
         $user_role = $decoded->data->role;
