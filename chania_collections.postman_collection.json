@@ -463,6 +463,242 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "SMS",
+			"item": [
+				{
+					"name": "Get Members for SMS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://chania.onrender.com/api/v1/sms/members",
+							"protocol": "https",
+							"host": [
+								"chania",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"sms",
+								"members"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Bulk SMS",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"member_ids\": [41, 138],\n    \"message\": \"This is a test message from Postman.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://chania.onrender.com/api/v1/sms/send",
+							"protocol": "https",
+							"host": [
+								"chania",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"sms",
+								"send"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get SMS Outbox",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://chania.onrender.com/api/v1/sms/outbox",
+							"protocol": "https",
+							"host": [
+								"chania",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"sms",
+								"outbox"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stages",
+			"item": [
+				{
+					"name": "Create Stage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test Stage\",\n    \"prefix\": \"TS\",\n    \"quota_start\": 1,\n    \"quota_end\": 1000,\n    \"current_quota\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://chania.onrender.com/api/v1/stages/create",
+							"protocol": "https",
+							"host": [
+								"chania",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stages",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Stages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://chania.onrender.com/api/v1/stages/read",
+							"protocol": "https",
+							"host": [
+								"chania",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stages",
+								"read"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Stage",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://chania.onrender.com/api/v1/stages/read_one?id=1",
+							"protocol": "https",
+							"host": [
+								"chania",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stages",
+								"read_one"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Stage",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"name\": \"Nairobi Updated\",\n    \"prefix\": \"NBB\",\n    \"quota_start\": 1,\n    \"quota_end\": 10000,\n    \"current_quota\": 6855\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://chania.onrender.com/api/v1/stages/update",
+							"protocol": "https",
+							"host": [
+								"chania",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stages",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Stage",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://chania.onrender.com/api/v1/stages/delete",
+							"protocol": "https",
+							"host": [
+								"chania",
+								"onrender",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stages",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 } 

@@ -97,17 +97,6 @@ switch ($uri) {
         require __DIR__ . '/../api/v1/stages/delete.php';
         break;
 
-    // SMS
-    case '/api/v1/sms/members':
-        require __DIR__ . '/../api/v1/sms/members.php';
-        break;
-    case '/api/v1/sms/send':
-        require __DIR__ . '/../api/v1/sms/send.php';
-        break;
-    case '/api/v1/sms/outbox':
-        require __DIR__ . '/../api/v1/sms/outbox.php';
-        break;
-
     // Default
     default:
         http_response_code(404);

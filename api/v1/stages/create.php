@@ -28,9 +28,9 @@ if (!$data) {
 
 $stage->name = $data->name;
 $stage->prefix = $data->prefix;
-$stage->quota_start = $data->quota_start;
-$stage->quota_end = $data->quota_end;
-$stage->current_quota = $data->current_quota;
+$stage->quota_start = $data->quota_start ?? 0;
+$stage->quota_end = $data->quota_end ?? 0;
+$stage->current_quota = $data->current_quota ?? 0;
 
 // Create stage
 if($stage->create()) {

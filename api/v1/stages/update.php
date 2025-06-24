@@ -21,11 +21,12 @@ $data = json_decode(file_get_contents("php://input"));
 // Set ID to update
 $stage->id = $data->id;
 
-$stage->name = $data->name;
-$stage->prefix = $data->prefix;
-$stage->quota_start = $data->quota_start;
-$stage->quota_end = $data->quota_end;
-$stage->current_quota = $data->current_quota;
+// Assign only the properties that are present in the request
+if (isset($data->name)) $stage->name = $data->name;
+if (isset($data->prefix)) $stage->prefix = $data->prefix;
+if (isset($data->quota_start)) $stage->quota_start = $data->quota_start;
+if (isset($data->quota_end)) $stage->quota_end = $data->quota_end;
+if (isset($data->current_quota)) $stage->current_quota = $data->current_quota;
 
 // Update stage
 if($stage->update()) {
