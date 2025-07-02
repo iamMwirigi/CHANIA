@@ -32,6 +32,9 @@ switch ($uri) {
     case '/api/v1/auth/login':
         require __DIR__ . '/../api/v1/auth/login.php';
         break;
+    case '/api/v1/auth/member/login':
+        require __DIR__ . '/../api/v1/auth/member/login.php';
+        break;
 
     // Dashboard
     case '/api/v1/dashboard':
