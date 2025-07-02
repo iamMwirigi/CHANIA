@@ -40,6 +40,9 @@ switch ($uri) {
     case '/api/v1/dashboard':
         require __DIR__ . '/../api/v1/dashboard/index.php';
         break;
+    case '/api/v1/dashboard/member':
+        require __DIR__ . '/../api/v1/dashboard/member.php';
+        break;
 
     // Members
     case '/api/v1/members/create':
