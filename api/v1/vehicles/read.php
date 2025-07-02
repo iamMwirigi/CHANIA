@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 include_once __DIR__ . '/../../../config/Database.php';
 include_once __DIR__ . '/../auth/authorize.php';
 
-$userData = authorize(['admin', 'user']);
+$userData = authorize(['admin', 'user', 'member']);
 
 $database = new Database();
 $db = $database->connect();
@@ -17,13 +17,22 @@ if($db === null) {
     exit();
 }
 
+// Default: all vehicles
 $query = 'SELECT v.id, v.number_plate, v.owner, m.name as owner_name
           FROM vehicle v
-          LEFT JOIN member m ON v.owner = m.id
-          ORDER BY v.number_plate ASC';
+          LEFT JOIN member m ON v.owner = m.id';
+$params = array();
+
+// If member, filter by owner
+if ($userData->role === 'member') {
+    $query .= ' WHERE v.owner = :owner_id';
+    $params[':owner_id'] = $userData->id;
+}
+
+$query .= ' ORDER BY v.number_plate ASC';
 
 $stmt = $db->prepare($query);
-$stmt->execute();
+$stmt->execute($params);
 
 $num = $stmt->rowCount();
 
