@@ -17,13 +17,13 @@ $db = $database->connect();
 
 $data = json_decode(file_get_contents("php://input"));
 
-$phone_number = $data->phone_number ?? null;
+$username = $data->username ?? null;
 $password = $data->password ?? null;
 
-if (!empty($phone_number) && !empty($password)) {
+if (!empty($username) && !empty($password)) {
     $query = "SELECT * FROM member WHERE phone_number = :phone_number AND entry_code = :entry_code LIMIT 1";
     $stmt = $db->prepare($query);
-    $stmt->bindParam(":phone_number", $phone_number);
+    $stmt->bindParam(":phone_number", $username);
     $stmt->bindParam(":entry_code", $password);
     $stmt->execute();
 
@@ -40,7 +40,7 @@ if (!empty($phone_number) && !empty($password)) {
             "exp" => $expirationTime,
             "data" => [
                 "id" => $member['id'],
-                "phone_number" => $member['phone_number'],
+                "username" => $member['phone_number'],
                 "role" => "member"
             ]
         ];
@@ -59,7 +59,7 @@ if (!empty($phone_number) && !empty($password)) {
     } else {
         http_response_code(401);
         echo json_encode([
-            "message" => "Invalid phone number or password.",
+            "message" => "Invalid username or password.",
             "response" => "error"
         ]);
         exit;
@@ -67,7 +67,7 @@ if (!empty($phone_number) && !empty($password)) {
 } else {
     http_response_code(400);
     echo json_encode([
-        "message" => "phone_number and password are required.",
+        "message" => "username and password are required.",
         "response" => "error"
     ]);
     exit;
