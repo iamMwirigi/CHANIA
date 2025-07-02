@@ -4,48 +4,62 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 include_once __DIR__ . '/../../../config/Database.php';
-include_once __DIR__ . '/../../../models/Sms.php';
 include_once __DIR__ . '/../auth/authorize.php';
 
-$userData = authorize(['admin']);
+$userData = authorize(['admin', 'user', 'member']);
 
-// Instantiate DB & connect
 $database = new Database();
 $db = $database->connect();
 
-// Instantiate sms object
-$sms = new Sms($db);
+if($db === null) {
+    http_response_code(503);
+    echo json_encode(['message' => 'Failed to connect to the database.', 'response' => 'error']);
+    exit();
+}
 
-// SMS query
-$result = $sms->read();
-// Get row count
-$num = $result->rowCount();
+$query = 'SELECT * FROM sms';
+$params = array();
 
-// Check if any messages
+if ($userData->role === 'member') {
+    // Find the member's phone number
+    $phone_number = $userData->phone_number ?? null;
+    if (!$phone_number) {
+        // Fallback: try to fetch from DB
+        $stmt = $db->prepare('SELECT phone_number FROM member WHERE id = :id');
+        $stmt->bindParam(':id', $userData->id);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $phone_number = $row ? $row['phone_number'] : null;
+    }
+    if ($phone_number) {
+        $query .= ' WHERE sent_to = :sent_to';
+        $params[':sent_to'] = $phone_number;
+    } else {
+        echo json_encode(['message' => 'Unable to determine member phone number for messages.', 'response' => 'error', 'data' => []]);
+        exit();
+    }
+}
+
+$query .= ' ORDER BY sent_date DESC, id DESC';
+
+$stmt = $db->prepare($query);
+$stmt->execute($params);
+
+$num = $stmt->rowCount();
+
 if ($num > 0) {
-    // SMS array
     $sms_arr = array();
     $sms_arr['data'] = array();
 
-    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-        extract($row);
-        $sms_item = array(
-            'id' => $id,
-            'recipient' => $sent_to,
-            'message' => $text_message,
-            'cost' => 'KES ' . number_format($cost, 2),
-            'status' => $sent_status == 1 ? 'Delivered' : 'Failed',
-            'date' => date('M d, Y', strtotime($sent_date)),
-            'time' => $sent_time,
-        );
-        // Push to "data"
-        array_push($sms_arr['data'], $sms_item);
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $sms_arr['data'][] = $row;
     }
-    // Turn to JSON & output
+    $sms_arr['message'] = 'Messages retrieved successfully';
+    $sms_arr['response'] = 'success';
+
     echo json_encode($sms_arr);
 } else {
-    // No Messages
     echo json_encode(
-        array('message' => 'No Messages Found', 'data' => [])
+        array('message' => 'No Messages Found', 'response' => 'success', 'data' => [])
     );
 } 
