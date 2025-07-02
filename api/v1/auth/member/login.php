@@ -31,7 +31,7 @@ if (!empty($phone_number) && !empty($password)) {
         $member = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $issuedAt = time();
-        $expirationTime = $issuedAt + 86400; // 1 day
+        $expirationTime = $issuedAt + 604800; // 7 days
         $payload = [
             "iss" => "chania_api",
             "aud" => "chania_member",

@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 include_once __DIR__ . '/../../../config/Database.php';
 include_once __DIR__ . '/../auth/authorize.php';
 
-$userData = authorize(['admin', 'user']);
+$userData = authorize(['admin', 'user', 'member']);
 
 $database = new Database();
 $db = $database->connect();
@@ -28,7 +28,25 @@ $query = 'SELECT * FROM new_transaction';
 $where_clauses = [];
 $params = [];
 
-if ($userData->role === 'user') {
+if ($userData->role === 'member') {
+    // Find the member's _user_ username (assuming member.number = _user_.username)
+    $member_number = $userData->number ?? null;
+    if (!$member_number) {
+        // Fallback: try to fetch from DB
+        $stmt = $db->prepare('SELECT number FROM member WHERE id = :id');
+        $stmt->bindParam(':id', $userData->id);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $member_number = $row ? $row['number'] : null;
+    }
+    if ($member_number) {
+        $where_clauses[] = "collected_by = :collected_by";
+        $params[':collected_by'] = $member_number;
+    } else {
+        echo json_encode(['message' => 'Unable to determine member number for collections.', 'response' => 'error', 'data' => []]);
+        exit();
+    }
+} else if ($userData->role === 'user') {
     $where_clauses[] = "collected_by = :username";
     $params[':username'] = $userData->username;
 } else if ($stage_name) {
