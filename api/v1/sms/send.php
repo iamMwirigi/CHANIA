@@ -40,7 +40,20 @@ foreach ($data->member_ids as $member_id) {
         if ($sanitized_number) {
             $api_result = Sms::sendTextChania($sanitized_number, $data->message, 'CHANIA');
             $api_result_decoded = json_decode($api_result, true);
-            $success = isset($api_result_decoded['Status']) && strtolower($api_result_decoded['Status']) === 'success';
+            // Improved success detection
+            $success = false;
+            if (
+                isset($api_result_decoded['ErrorCode']) && $api_result_decoded['ErrorCode'] === 0 &&
+                isset($api_result_decoded['Data']) && is_array($api_result_decoded['Data'])
+            ) {
+                $success = true;
+                foreach ($api_result_decoded['Data'] as $msg) {
+                    if (!isset($msg['MessageErrorCode']) || $msg['MessageErrorCode'] !== 0) {
+                        $success = false;
+                        break;
+                    }
+                }
+            }
             $sms->sent_to = $sanitized_number;
             $sms->text_message = $data->message;
             $sms->sent_date = date('Y-m-d');
