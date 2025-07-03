@@ -32,8 +32,10 @@ if ($userData->role === 'member') {
         $phone_number = $row ? $row['phone_number'] : null;
     }
     if ($phone_number) {
+        include_once __DIR__ . '/../../../models/Sms.php';
+        $sanitized_number = Sms::sanitizeNumber($phone_number);
         $query .= ' WHERE sent_to = :sent_to';
-        $params[':sent_to'] = $phone_number;
+        $params[':sent_to'] = $sanitized_number;
     } else {
         echo json_encode(['message' => 'Unable to determine member phone number for messages.', 'response' => 'error', 'data' => []]);
         exit();
