@@ -91,6 +91,9 @@ switch ($uri) {
     case '/api/v1/collections/create':
         require __DIR__ . '/../api/v1/collections/create.php';
         break;
+    case '/api/v1/collections/all_members_collections.php':
+        require __DIR__ . '/../api/v1/collections/all_members_collections.php';
+        break;
 
     // Stages
     case '/api/v1/stages/create':
