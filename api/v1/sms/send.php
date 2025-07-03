@@ -47,6 +47,7 @@ foreach ($data->member_ids as $member_id) {
             $sms->sent_time = date('H:i:s');
             $sms->sent_status = $success ? 1 : 0;
             $sms->cost = 0.80; // Example cost, adjust if needed
+            $sms->sent_from = 'CHANIA'; // Set sender for DB
 
             if ($sms->create()) {
                 $results[] = [

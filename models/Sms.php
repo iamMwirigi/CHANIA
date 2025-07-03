@@ -41,10 +41,11 @@ class Sms {
     }
     
     public function create() {
-        $query = 'INSERT INTO ' . $this->table . ' SET sent_to = :sent_to, text_message = :text_message, sent_date = :sent_date, sent_time = :sent_time, sent_status = :sent_status, cost = :cost';
+        $query = 'INSERT INTO ' . $this->table . ' SET sent_from = :sent_from, sent_to = :sent_to, text_message = :text_message, sent_date = :sent_date, sent_time = :sent_time, sent_status = :sent_status, cost = :cost';
 
         $stmt = $this->conn->prepare($query);
 
+        $this->sent_from = htmlspecialchars(strip_tags($this->sent_from));
         $this->sent_to = htmlspecialchars(strip_tags($this->sent_to));
         $this->text_message = htmlspecialchars(strip_tags($this->text_message));
         $this->sent_date = htmlspecialchars(strip_tags($this->sent_date));
@@ -52,6 +53,7 @@ class Sms {
         $this->sent_status = htmlspecialchars(strip_tags($this->sent_status));
         $this->cost = htmlspecialchars(strip_tags($this->cost));
 
+        $stmt->bindParam(':sent_from', $this->sent_from);
         $stmt->bindParam(':sent_to', $this->sent_to);
         $stmt->bindParam(':text_message', $this->text_message);
         $stmt->bindParam(':sent_date', $this->sent_date);
