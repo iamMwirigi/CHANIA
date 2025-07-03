@@ -1,0 +1,84 @@
+<?php
+// Headers
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
+
+include_once __DIR__ . '/../../../config/Database.php';
+include_once __DIR__ . '/../auth/authorize.php';
+
+$userData = authorize(['member']);
+
+$database = new Database();
+$db = $database->connect();
+
+if($db === null) {
+    http_response_code(503);
+    echo json_encode(['message' => 'Failed to connect to the database.', 'response' => 'error']);
+    exit();
+}
+
+$data = json_decode(file_get_contents("php://input"));
+$start_date = isset($data->start_date) ? $data->start_date : (isset($_GET['start_date']) ? $_GET['start_date'] : null);
+$end_date = isset($data->end_date) ? $data->end_date : (isset($_GET['end_date']) ? $_GET['end_date'] : null);
+
+// Get all vehicles owned by the member
+$vehicle_query = 'SELECT number_plate FROM vehicle WHERE owner = :owner';
+$vehicle_stmt = $db->prepare($vehicle_query);
+$vehicle_stmt->bindParam(':owner', $userData->id);
+$vehicle_stmt->execute();
+$vehicles = $vehicle_stmt->fetchAll(PDO::FETCH_COLUMN);
+
+if (empty($vehicles)) {
+    echo json_encode([
+        'message' => 'No Vehicles Found',
+        'response' => 'success',
+        'data' => [],
+        'totals' => []
+    ]);
+    exit();
+}
+
+// Prepare for per-vehicle and overall totals
+$deduction_fields = ['welfare', 'investment', 'sacco_fee', 'savings', 'tyres', 'insurance'];
+$per_vehicle = [];
+$overall_totals = array_fill_keys($deduction_fields, 0);
+$overall_totals['grand_total_deductions'] = 0;
+
+foreach ($vehicles as $number_plate) {
+    $query = 'SELECT * FROM new_transaction WHERE number_plate = :number_plate';
+    $params = [':number_plate' => $number_plate];
+    if ($start_date) {
+        $query .= ' AND t_date >= :start_date';
+        $params[':start_date'] = $start_date;
+    }
+    if ($end_date) {
+        $query .= ' AND t_date <= :end_date';
+        $params[':end_date'] = $end_date;
+    }
+    $stmt = $db->prepare($query);
+    $stmt->execute($params);
+    $deductions = array_fill_keys($deduction_fields, 0);
+    $total_deductions = 0;
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        foreach ($deduction_fields as $field) {
+            $deductions[$field] += is_numeric($row[$field]) ? (float)$row[$field] : 0;
+        }
+    }
+    foreach ($deduction_fields as $field) {
+        $total_deductions += $deductions[$field];
+        $overall_totals[$field] += $deductions[$field];
+    }
+    $overall_totals['grand_total_deductions'] += $total_deductions;
+    $per_vehicle[] = array_merge([
+        'number_plate' => $number_plate,
+        'total_deductions' => $total_deductions
+    ], array_map(function($v, $k) { return $v; }, $deductions, array_keys($deductions)));
+}
+
+http_response_code(200);
+echo json_encode([
+    'message' => 'Member collections and deductions retrieved successfully',
+    'response' => 'success',
+    'data' => $per_vehicle,
+    'totals' => $overall_totals
+]); 
