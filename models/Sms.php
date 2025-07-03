@@ -66,4 +66,41 @@ class Sms {
         printf("Error: %s.\n", $stmt->error);
         return false;
     }
+
+    // Static helper to sanitize phone numbers
+    public static function sanitizeNumber($phone) {
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if (strpos($phone, '0') === 0) {
+            $phone = '254' . substr($phone, 1);
+        } elseif (strpos($phone, '7') === 0) {
+            $phone = '254' . $phone;
+        } elseif (strpos($phone, '254') === 0) {
+            // Already correct
+        } elseif (strpos($phone, '1') === 0) {
+            $phone = '254' . $phone;
+        } else {
+            return null;
+        }
+        return $phone;
+    }
+
+    // Static helper to send SMS via Chania API
+    public static function sendTextChania($recipient, $message, $senderID) {
+        $baseUrl = "http://94.72.97.10/api/v2/SendSMS";
+        $ch = curl_init($baseUrl);
+        $data = array(
+            'ApiKey' => '4zO2J0eeE74irbiK7gRlBzn/ovuptXNs9hhiXohnmHk=',
+            'ClientId' => '1f7e7003-aef6-439f-a0dc-8e3af7b9b9a1',
+            'SenderId' => $senderID,
+            'Message' => $message,
+            'MobileNumbers' => $recipient
+        );
+        $payload = json_encode($data);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Accept:application/json'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return $result;
+    }
 } 

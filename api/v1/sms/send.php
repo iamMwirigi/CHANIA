@@ -36,19 +36,33 @@ foreach ($data->member_ids as $member_id) {
     $member = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($member && !empty($member['phone_number'])) {
-        // Here you would integrate with your SMS gateway API
-        // For now, we'll simulate a successful response
-        $sms->sent_to = $member['phone_number'];
-        $sms->text_message = $data->message;
-        $sms->sent_date = date('Y-m-d');
-        $sms->sent_time = date('H:i:s');
-        $sms->sent_status = 1; // 1 for success, 0 for failure
-        $sms->cost = 0.80; // Example cost
+        $sanitized_number = Sms::sanitizeNumber($member['phone_number']);
+        if ($sanitized_number) {
+            $api_result = Sms::sendTextChania($sanitized_number, $data->message, 'CHANIA');
+            $api_result_decoded = json_decode($api_result, true);
+            $success = isset($api_result_decoded['Status']) && strtolower($api_result_decoded['Status']) === 'success';
+            $sms->sent_to = $sanitized_number;
+            $sms->text_message = $data->message;
+            $sms->sent_date = date('Y-m-d');
+            $sms->sent_time = date('H:i:s');
+            $sms->sent_status = $success ? 1 : 0;
+            $sms->cost = 0.80; // Example cost, adjust if needed
 
-        if ($sms->create()) {
-            $results[] = ['member_id' => $member_id, 'status' => 'success'];
+            if ($sms->create()) {
+                $results[] = [
+                    'member_id' => $member_id,
+                    'status' => $success ? 'success' : 'api_failed',
+                    'api_response' => $api_result_decoded
+                ];
+            } else {
+                $results[] = [
+                    'member_id' => $member_id,
+                    'status' => 'failed_to_log',
+                    'api_response' => $api_result_decoded
+                ];
+            }
         } else {
-            $results[] = ['member_id' => $member_id, 'status' => 'failed_to_log'];
+            $results[] = ['member_id' => $member_id, 'status' => 'invalid_phone_format'];
         }
     } else {
         $results[] = ['member_id' => $member_id, 'status' => 'member_not_found_or_no_phone'];
