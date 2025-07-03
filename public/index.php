@@ -85,6 +85,9 @@ switch ($uri) {
     case '/api/v1/collections/read_one':
         require __DIR__ . '/../api/v1/collections/read_one.php';
         break;
+    case '/api/v1/collections/member_collections':
+        require __DIR__ . '/../api/v1/collections/member_collections.php';
+        break;
 
     // Stages
     case '/api/v1/stages/create':
