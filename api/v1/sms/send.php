@@ -38,7 +38,7 @@ foreach ($data->member_ids as $member_id) {
     if ($member && !empty($member['phone_number'])) {
         $sanitized_number = Sms::sanitizeNumber($member['phone_number']);
         if ($sanitized_number) {
-            $api_result = Sms::sendTextChania($sanitized_number, $data->message, 'CHANIA');
+            $api_result = Sms::sendTextChania($sanitized_number, $data->message, 'iGuru');
             $api_result_decoded = json_decode($api_result, true);
             // Improved success detection
             $success = false;
