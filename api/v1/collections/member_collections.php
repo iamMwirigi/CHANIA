@@ -72,7 +72,7 @@ foreach ($vehicles as $number_plate) {
     $per_vehicle[] = array_merge([
         'number_plate' => $number_plate,
         'total_deductions' => $total_deductions
-    ], array_map(function($v, $k) { return $v; }, $deductions, array_keys($deductions)));
+    ], $deductions);
 }
 
 http_response_code(200);
