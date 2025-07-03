@@ -48,6 +48,11 @@ foreach ($data->member_ids as $member_id) {
             $sms->sent_status = $success ? 1 : 0;
             $sms->cost = 0.80; // Example cost, adjust if needed
             $sms->sent_from = 'CHANIA'; // Set sender for DB
+            $sms->package_id = '';
+            $sms->af_cost = 0;
+            $sms->sms_characters = strlen($data->message);
+            $sms->pages = 1;
+            $sms->page_cost = 0.80;
 
             if ($sms->create()) {
                 $results[] = [

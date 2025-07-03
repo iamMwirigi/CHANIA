@@ -41,24 +41,34 @@ class Sms {
     }
     
     public function create() {
-        $query = 'INSERT INTO ' . $this->table . ' SET sent_from = :sent_from, sent_to = :sent_to, text_message = :text_message, sent_date = :sent_date, sent_time = :sent_time, sent_status = :sent_status, cost = :cost';
+        $query = 'INSERT INTO ' . $this->table . ' SET sent_from = :sent_from, sent_to = :sent_to, package_id = :package_id, text_message = :text_message, af_cost = :af_cost, sent_date = :sent_date, sent_time = :sent_time, sms_characters = :sms_characters, sent_status = :sent_status, pages = :pages, page_cost = :page_cost, cost = :cost';
 
         $stmt = $this->conn->prepare($query);
 
         $this->sent_from = htmlspecialchars(strip_tags($this->sent_from));
         $this->sent_to = htmlspecialchars(strip_tags($this->sent_to));
+        $this->package_id = htmlspecialchars(strip_tags($this->package_id));
         $this->text_message = htmlspecialchars(strip_tags($this->text_message));
+        $this->af_cost = htmlspecialchars(strip_tags($this->af_cost));
         $this->sent_date = htmlspecialchars(strip_tags($this->sent_date));
         $this->sent_time = htmlspecialchars(strip_tags($this->sent_time));
+        $this->sms_characters = htmlspecialchars(strip_tags($this->sms_characters));
         $this->sent_status = htmlspecialchars(strip_tags($this->sent_status));
+        $this->pages = htmlspecialchars(strip_tags($this->pages));
+        $this->page_cost = htmlspecialchars(strip_tags($this->page_cost));
         $this->cost = htmlspecialchars(strip_tags($this->cost));
 
         $stmt->bindParam(':sent_from', $this->sent_from);
         $stmt->bindParam(':sent_to', $this->sent_to);
+        $stmt->bindParam(':package_id', $this->package_id);
         $stmt->bindParam(':text_message', $this->text_message);
+        $stmt->bindParam(':af_cost', $this->af_cost);
         $stmt->bindParam(':sent_date', $this->sent_date);
         $stmt->bindParam(':sent_time', $this->sent_time);
+        $stmt->bindParam(':sms_characters', $this->sms_characters);
         $stmt->bindParam(':sent_status', $this->sent_status);
+        $stmt->bindParam(':pages', $this->pages);
+        $stmt->bindParam(':page_cost', $this->page_cost);
         $stmt->bindParam(':cost', $this->cost);
 
         if ($stmt->execute()) {
