@@ -19,55 +19,55 @@ if($db === null) {
 
 $data = json_decode(file_get_contents("php://input"));
 
-$start_date = isset($data->start_date) ? $data->start_date : (isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d'));
-$end_date = isset($data->end_date) ? $data->end_date : (isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d'));
+$start_date = isset($data->start_date) ? $data->start_date : (isset($_GET['start_date']) ? $_GET['start_date'] : null);
+$end_date = isset($data->end_date) ? $data->end_date : (isset($_GET['end_date']) ? $_GET['end_date'] : null);
 $stage_name = isset($data->stage_name) ? $data->stage_name : (isset($_GET['stage_name']) ? $_GET['stage_name'] : null);
-
-$query = 'SELECT * FROM new_transaction';
 
 $where_clauses = [];
 $params = [];
 
 if ($userData->role === 'member') {
-    // Find the member's _user_ username (assuming member.number = _user_.username)
-    $member_number = $userData->number ?? null;
-    if (!$member_number) {
-        // Fallback: try to fetch from DB
-        $stmt = $db->prepare('SELECT number FROM member WHERE id = :id');
-        $stmt->bindParam(':id', $userData->id);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $member_number = $row ? $row['number'] : null;
+    // For members, get collections for vehicles they own
+    $query = 'SELECT t.* FROM new_transaction t JOIN vehicle v ON t.number_plate = v.number_plate WHERE v.owner = :owner';
+    $params[':owner'] = $userData->id;
+    if ($start_date) {
+        $where_clauses[] = "t.t_date >= :start_date";
+        $params[':start_date'] = $start_date;
     }
-    if ($member_number) {
-        $where_clauses[] = "collected_by = :collected_by";
-        $params[':collected_by'] = $member_number;
-    } else {
-        echo json_encode(['message' => 'Unable to determine member number for collections.', 'response' => 'error', 'data' => []]);
-        exit();
+    if ($end_date) {
+        $where_clauses[] = "t.t_date <= :end_date";
+        $params[':end_date'] = $end_date;
     }
-} else if ($userData->role === 'user') {
-    $where_clauses[] = "collected_by = :username";
-    $params[':username'] = $userData->username;
-} else if ($stage_name) {
-    $where_clauses[] = "stage_name = :stage_name";
-    $params[':stage_name'] = $stage_name;
+    if ($stage_name) {
+        $where_clauses[] = "t.stage_name = :stage_name";
+        $params[':stage_name'] = $stage_name;
+    }
+    if (count($where_clauses) > 0) {
+        $query .= ' AND ' . implode(' AND ', $where_clauses);
+    }
+    $query .= ' ORDER BY t.t_date DESC, t.id DESC';
+} else {
+    $query = 'SELECT * FROM new_transaction';
+    if ($userData->role === 'user') {
+        $where_clauses[] = "collected_by = :username";
+        $params[':username'] = $userData->username;
+    } else if ($stage_name) {
+        $where_clauses[] = "stage_name = :stage_name";
+        $params[':stage_name'] = $stage_name;
+    }
+    if ($start_date) {
+        $where_clauses[] = "t_date >= :start_date";
+        $params[':start_date'] = $start_date;
+    }
+    if ($end_date) {
+        $where_clauses[] = "t_date <= :end_date";
+        $params[':end_date'] = $end_date;
+    }
+    if (count($where_clauses) > 0) {
+        $query .= " WHERE " . implode(" AND ", $where_clauses);
+    }
+    $query .= ' ORDER BY t_date DESC, id DESC';
 }
-
-if ($start_date) {
-    $where_clauses[] = "t_date >= :start_date";
-    $params[':start_date'] = $start_date;
-}
-if ($end_date) {
-    $where_clauses[] = "t_date <= :end_date";
-    $params[':end_date'] = $end_date;
-}
-
-if (count($where_clauses) > 0) {
-    $query .= " WHERE " . implode(" AND ", $where_clauses);
-}
-
-$query .= ' ORDER BY t_date DESC, id DESC';
 
 $stmt = $db->prepare($query);
 $stmt->execute($params);
@@ -79,26 +79,8 @@ if($num > 0) {
     $transactions_arr['data'] = array();
 
     while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        extract($row);
-        $transaction_item = array(
-            'id' => $id,
-            'number_plate' => $number_plate,
-            'sacco_fee' => $sacco_fee,
-            'investment' => $investment,
-            'savings' => $savings,
-            'tyres' => $tyres,
-            'insurance' => $insurance,
-            'welfare' => $welfare,
-            't_time' => $t_time,
-            't_date' => $t_date,
-            'collected_by' => $collected_by,
-            'stage_name' => $stage_name,
-            'amount' => $amount
-        );
-
-        array_push($transactions_arr['data'], $transaction_item);
+        $transactions_arr['data'][] = $row;
     }
-    
     $transactions_arr['message'] = 'Collections retrieved successfully';
     $transactions_arr['response'] = 'success';
 
