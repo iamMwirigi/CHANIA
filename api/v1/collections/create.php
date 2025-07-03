@@ -61,13 +61,13 @@ $stmt->bindParam(':tyres', $data['tyres']);
 $stmt->bindParam(':insurance', $data['insurance']);
 $stmt->bindParam(':welfare', $data['welfare']);
 $stmt->bindParam(':t_time', $data['t_time']);
-$stmt->bindParam(':t_date', $data['t_date']);
+$stmt->bindParam(':t_date', $data['t_date'] ?? date('Y-m-d'));
 $stmt->bindParam(':collected_by', $data['collected_by']);
 $stmt->bindParam(':stage_name', $data['stage_name']);
 $stmt->bindParam(':amount', $data['amount']);
 // Optional fields
-$stmt->bindValue(':s_time', $data['s_time'] ?? null);
-$stmt->bindValue(':s_date', $data['s_date'] ?? null);
+$stmt->bindValue(':s_time', $data['s_time'] ?? date('H:i:s'));
+$stmt->bindValue(':s_date', $data['s_date'] ?? date('Y-m-d'));
 $stmt->bindValue(':client_side_id', $data['client_side_id'] ?? null);
 $stmt->bindValue(':receipt_no', $data['receipt_no'] ?? null);
 $stmt->bindValue(':delete_status', $data['delete_status'] ?? 0);
