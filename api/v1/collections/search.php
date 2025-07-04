@@ -25,12 +25,11 @@ $where_clauses = [];
 $params = [];
 
 if ($query !== '') {
-    $where_clauses[] = "(m.name LIKE ? OR m.phone_number LIKE ? OR m.number LIKE ? OR m.id = ?)";
+    $where_clauses[] = "(m.name LIKE ? OR m.phone_number LIKE ? OR m.number LIKE ?)";
     $like_query = "%$query%";
     $params[] = $like_query;
     $params[] = $like_query;
     $params[] = $like_query;
-    $params[] = $query; // exact match for ID
 }
 if ($start_date) {
     $where_clauses[] = "c.t_date >= ?";
@@ -46,12 +45,11 @@ $where_sql = count($where_clauses) > 0 ? " WHERE " . implode(" AND ", $where_cla
 $member_where = [];
 $member_params = [];
 if ($query !== '') {
-    $member_where[] = "(name LIKE ? OR phone_number LIKE ? OR number LIKE ? OR id = ?)";
+    $member_where[] = "(name LIKE ? OR phone_number LIKE ? OR number LIKE ?)";
     $like_query = "%$query%";
     $member_params[] = $like_query;
     $member_params[] = $like_query;
     $member_params[] = $like_query;
-    $member_params[] = $query;
 }
 $member_where_sql = count($member_where) > 0 ? " WHERE " . implode(" AND ", $member_where) : '';
 $members_sql = "SELECT id, name FROM member $member_where_sql";
