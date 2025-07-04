@@ -46,8 +46,7 @@ $sql = "SELECT c.*, m.id as member_id, m.name, m.phone_number, m.number
         JOIN vehicle v ON c.number_plate = v.number_plate
         JOIN member m ON v.owner = m.id
         $where_sql
-        ORDER BY m.id, c.number_plate, c.t_date DESC, c.t_time DESC
-        LIMIT 100";
+        ORDER BY m.id, c.number_plate, c.t_date DESC, c.t_time DESC";
 
 $stmt = $db->prepare($sql);
 $stmt->execute($params);
