@@ -26,7 +26,7 @@ $end_date = isset($data->end_date) ? $data->end_date : (isset($_GET['end_date'])
 
 try {
     // Find the member's vehicles
-    $stmt = $db->prepare('SELECT number_plate FROM vehicles WHERE owner_id = :owner_id');
+    $stmt = $db->prepare('SELECT number_plate FROM vehicle WHERE owner = :owner_id');
     $stmt->bindParam(':owner_id', $userData->id);
     $stmt->execute();
     $vehicle_rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
