@@ -8,7 +8,8 @@ header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,
 include_once __DIR__ . '/../../../config/Database.php';
 include_once __DIR__ . '/../auth/authorize.php';
 
-$userData = authorize(['admin', 'user']);
+// Allow both admin/user and member
+$userData = authorize(['admin', 'user', 'member']);
 
 $database = new Database();
 $db = $database->connect();
@@ -25,6 +26,72 @@ $start_date = isset($data->start_date) ? $data->start_date : (isset($_GET['start
 $end_date = isset($data->end_date) ? $data->end_date : (isset($_GET['end_date']) ? $_GET['end_date'] : null);
 
 try {
+    if ($userData->role === 'member') {
+        // --- MEMBER DASHBOARD LOGIC ---
+        $stmt = $db->prepare('SELECT number_plate FROM vehicle WHERE owner = :owner_id');
+        $stmt->bindParam(':owner_id', $userData->id);
+        $stmt->execute();
+        $vehicle_rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $number_plates = array_column($vehicle_rows, 'number_plate');
+
+        if (empty($number_plates)) {
+            $response_data = [
+                "transactions" => 0,
+                "total_amount" => 0,
+                "vehicles" => 0
+            ];
+            http_response_code(200);
+            echo json_encode([
+                "message" => "Dashboard data retrieved successfully",
+                "response" => "success",
+                "data" => $response_data
+            ]);
+            exit();
+        }
+
+        $in_clause = implode(',', array_fill(0, count($number_plates), '?'));
+        $params = $number_plates;
+        $date_clauses = [];
+        if ($start_date) {
+            $date_clauses[] = "t_date >= ?";
+            $params[] = $start_date;
+        }
+        if ($end_date) {
+            $date_clauses[] = "t_date <= ?";
+            $params[] = $end_date;
+        }
+        $where_sql = " WHERE number_plate IN ($in_clause)";
+        if (count($date_clauses) > 0) {
+            $where_sql .= " AND " . implode(" AND ", $date_clauses);
+        }
+
+        $transactions_query = "SELECT COUNT(*) as transactions, SUM(amount) as total_amount FROM new_transaction" . $where_sql;
+        $vehicles_query = "SELECT COUNT(DISTINCT number_plate) as vehicles FROM new_transaction" . $where_sql;
+
+        $stmt_transactions = $db->prepare($transactions_query);
+        $stmt_transactions->execute($params);
+        $transactions_data = $stmt_transactions->fetch(PDO::FETCH_ASSOC);
+
+        $stmt_vehicles = $db->prepare($vehicles_query);
+        $stmt_vehicles->execute($params);
+        $vehicles_data = $stmt_vehicles->fetch(PDO::FETCH_ASSOC);
+
+        $response_data = [
+            "transactions" => $transactions_data['transactions'] ?? 0,
+            "total_amount" => (int)($transactions_data['total_amount'] ?? 0),
+            "vehicles" => $vehicles_data['vehicles'] ?? 0
+        ];
+        http_response_code(200);
+        echo json_encode([
+            "message" => "Dashboard data retrieved successfully",
+            "response" => "success",
+            "data" => $response_data
+        ]);
+        exit();
+    }
+    // --- END MEMBER LOGIC ---
+
+    // --- ADMIN/USER DASHBOARD LOGIC ---
     // Base queries
     $transactions_query = "SELECT COUNT(*) as transactions, SUM(amount) as total_amount FROM new_transaction";
     $vehicles_query = "SELECT COUNT(DISTINCT number_plate) as vehicles FROM new_transaction";
@@ -92,6 +159,7 @@ try {
         "response" => "success",
         "data" => $response_data
     ]);
+    // --- END ADMIN/USER LOGIC ---
 
 } catch (PDOException $e) {
     http_response_code(500);
