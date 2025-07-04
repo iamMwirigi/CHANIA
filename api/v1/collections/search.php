@@ -25,11 +25,12 @@ $where_clauses = [];
 $params = [];
 
 if ($query !== '') {
-    $where_clauses[] = "(m.name LIKE ? OR m.phone_number LIKE ? OR m.number LIKE ?)";
+    $where_clauses[] = "(m.name LIKE ? OR m.phone_number LIKE ? OR m.number LIKE ? OR m.id = ?)";
     $like_query = "%$query%";
     $params[] = $like_query;
     $params[] = $like_query;
     $params[] = $like_query;
+    $params[] = $query; // exact match for ID
 }
 if ($start_date) {
     $where_clauses[] = "c.t_date >= ?";
