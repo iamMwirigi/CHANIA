@@ -25,30 +25,45 @@ $start_date = isset($data->start_date) ? $data->start_date : (isset($_GET['start
 $end_date = isset($data->end_date) ? $data->end_date : (isset($_GET['end_date']) ? $_GET['end_date'] : null);
 
 try {
-    // Find the member's _user_ username (assuming member.number = _user_.username)
-    $stmt = $db->prepare('SELECT number FROM member WHERE id = :id');
-    $stmt->bindParam(':id', $userData->id);
+    // Find the member's vehicles
+    $stmt = $db->prepare('SELECT number_plate FROM vehicles WHERE owner_id = :owner_id');
+    $stmt->bindParam(':owner_id', $userData->id);
     $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $member_number = $row ? $row['number'] : null;
+    $vehicle_rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $number_plates = array_column($vehicle_rows, 'number_plate');
 
-    if (!$member_number) {
-        echo json_encode(["message" => "Unable to determine member number for dashboard.", "response" => "error"]);
+    if (empty($number_plates)) {
+        // Member owns no vehicles
+        $response_data = [
+            "transactions" => 0,
+            "total_amount" => 0,
+            "vehicles" => 0
+        ];
+        http_response_code(200);
+        echo json_encode([
+            "message" => "Dashboard data retrieved successfully",
+            "response" => "success",
+            "data" => $response_data
+        ]);
         exit();
     }
 
-    // Base queries for member
-    $where_clauses = ["collected_by = :collected_by"];
-    $params = [':collected_by' => $member_number];
+    // Build placeholders for IN clause
+    $in_clause = implode(',', array_fill(0, count($number_plates), '?'));
+    $params = $number_plates;
+    $date_clauses = [];
     if ($start_date) {
-        $where_clauses[] = "t_date >= :start_date";
-        $params[':start_date'] = $start_date;
+        $date_clauses[] = "t_date >= ?";
+        $params[] = $start_date;
     }
     if ($end_date) {
-        $where_clauses[] = "t_date <= :end_date";
-        $params[':end_date'] = $end_date;
+        $date_clauses[] = "t_date <= ?";
+        $params[] = $end_date;
     }
-    $where_sql = count($where_clauses) > 0 ? " WHERE " . implode(" AND ", $where_clauses) : "";
+    $where_sql = " WHERE number_plate IN ($in_clause)";
+    if (count($date_clauses) > 0) {
+        $where_sql .= " AND " . implode(" AND ", $date_clauses);
+    }
 
     $transactions_query = "SELECT COUNT(*) as transactions, SUM(amount) as total_amount FROM new_transaction" . $where_sql;
     $vehicles_query = "SELECT COUNT(DISTINCT number_plate) as vehicles FROM new_transaction" . $where_sql;
@@ -62,11 +77,11 @@ try {
     $stmt_vehicles->execute($params);
     $vehicles_data = $stmt_vehicles->fetch(PDO::FETCH_ASSOC);
 
-    // Prepare response data (no owners, no office_stats)
+    // Prepare response data
     $response_data = [
-        "transactions" => $transactions_data['transactions'] ?? "0",
+        "transactions" => $transactions_data['transactions'] ?? 0,
         "total_amount" => (int)($transactions_data['total_amount'] ?? 0),
-        "vehicles" => $vehicles_data['vehicles'] ?? "0"
+        "vehicles" => $vehicles_data['vehicles'] ?? 0
     ];
     
     // Final Response

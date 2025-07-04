@@ -48,25 +48,25 @@ if ($userData->role === 'member') {
     $query .= ' ORDER BY t.t_date DESC, t.id DESC';
 } else {
     $query = 'SELECT * FROM new_transaction';
-    if ($userData->role === 'user') {
-        $where_clauses[] = "collected_by = :username";
-        $params[':username'] = $userData->username;
-    } else if ($stage_name) {
-        $where_clauses[] = "stage_name = :stage_name";
-        $params[':stage_name'] = $stage_name;
-    }
-    if ($start_date) {
-        $where_clauses[] = "t_date >= :start_date";
-        $params[':start_date'] = $start_date;
-    }
-    if ($end_date) {
-        $where_clauses[] = "t_date <= :end_date";
-        $params[':end_date'] = $end_date;
-    }
-    if (count($where_clauses) > 0) {
-        $query .= " WHERE " . implode(" AND ", $where_clauses);
-    }
-    $query .= ' ORDER BY t_date DESC, id DESC';
+if ($userData->role === 'user') {
+    $where_clauses[] = "collected_by = :username";
+    $params[':username'] = $userData->username;
+} else if ($stage_name) {
+    $where_clauses[] = "stage_name = :stage_name";
+    $params[':stage_name'] = $stage_name;
+}
+if ($start_date) {
+    $where_clauses[] = "t_date >= :start_date";
+    $params[':start_date'] = $start_date;
+}
+if ($end_date) {
+    $where_clauses[] = "t_date <= :end_date";
+    $params[':end_date'] = $end_date;
+}
+if (count($where_clauses) > 0) {
+    $query .= " WHERE " . implode(" AND ", $where_clauses);
+}
+$query .= ' ORDER BY t_date DESC, id DESC';
 }
 
 $stmt = $db->prepare($query);
