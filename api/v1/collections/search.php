@@ -46,32 +46,71 @@ $sql = "SELECT c.*, m.id as member_id, m.name, m.phone_number, m.number
         JOIN vehicle v ON c.number_plate = v.number_plate
         JOIN member m ON v.owner = m.id
         $where_sql
-        ORDER BY c.t_date DESC, c.t_time DESC
+        ORDER BY m.id, c.number_plate, c.t_date DESC, c.t_time DESC
         LIMIT 100";
 
 $stmt = $db->prepare($sql);
 $stmt->execute($params);
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$data = array_map(function($row) {
-    return [
-        "collection_id" => $row['id'],
-        "number_plate" => $row['number_plate'],
-        "amount" => $row['amount'] ?? null,
-        "t_date" => $row['t_date'],
-        "t_time" => $row['t_time'],
-        "member" => [
-            "id" => $row['member_id'],
-            "name" => $row['name'],
-            "phone_number" => $row['phone_number'],
-            "number" => $row['number']
-        ]
-    ];
-}, $results);
+// Group by member, then by vehicle
+$members = [];
+foreach ($results as $row) {
+    $member_id = $row['member_id'];
+    if (!isset($members[$member_id])) {
+        $members[$member_id] = [
+            'member_id' => (string)$member_id,
+            'member_name' => $row['name'],
+            'collection' => [],
+            'totals' => [
+                'welfare' => 0,
+                'investment' => 0,
+                'sacco_fee' => 0,
+                'savings' => 0,
+                'tyres' => 0,
+                'insurance' => 0,
+                'grand_total_deductions' => 0
+            ]
+        ];
+    }
+    $number_plate = $row['number_plate'];
+    // Per-vehicle aggregation
+    if (!isset($members[$member_id]['collection'][$number_plate])) {
+        $members[$member_id]['collection'][$number_plate] = [
+            'number_plate' => $number_plate,
+            'welfare' => 0,
+            'investment' => 0,
+            'sacco_fee' => 0,
+            'savings' => 0,
+            'tyres' => 0,
+            'insurance' => 0,
+            'total_deductions' => 0
+        ];
+    }
+    // Sum up deductions for this transaction
+    $fields = ['welfare','investment','sacco_fee','savings','tyres','insurance'];
+    $total = 0;
+    foreach ($fields as $field) {
+        $val = isset($row[$field]) ? (float)$row[$field] : 0;
+        $members[$member_id]['collection'][$number_plate][$field] += $val;
+        $members[$member_id]['totals'][$field] += $val;
+        $total += $val;
+    }
+    $members[$member_id]['collection'][$number_plate]['total_deductions'] += $total;
+    $members[$member_id]['totals']['grand_total_deductions'] += $total;
+}
+
+// Format collections as arrays
+foreach ($members as &$member) {
+    $member['collection'] = array_values($member['collection']);
+}
+
+// If only one member, return as object, else as array
+$final_data = count($members) === 1 ? array_values($members)[0] : array_values($members);
 
 http_response_code(200);
 echo json_encode([
-    "message" => "Collections search successful",
+    "message" => "Member collections and deductions retrieved successfully",
     "response" => "success",
-    "data" => $data
+    "data" => $final_data
 ]); 
