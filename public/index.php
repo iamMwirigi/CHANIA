@@ -77,6 +77,9 @@ switch ($uri) {
     case '/api/v1/vehicles/delete':
         require __DIR__ . '/../api/v1/vehicles/delete.php';
         break;
+    case '/api/v1/vehicles/report':
+        require __DIR__ . '/../api/v1/vehicles/report.php';
+        break;
 
     // Collections
     case '/api/v1/collections/read':
